@@ -1,4 +1,12 @@
-const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api";
+const getApiBase = () => {
+  try {
+    return import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api";
+  } catch (e) {
+    return "http://localhost:8000/api";
+  }
+};
+
+const API_BASE = getApiBase();
 
 export async function getShipments() {
   const res = await fetch(`${API_BASE}/shipments`);

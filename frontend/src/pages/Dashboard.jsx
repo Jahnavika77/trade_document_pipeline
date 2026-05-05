@@ -55,7 +55,7 @@ export default function Dashboard() {
   const loadHistory = async () => {
     setLoadingHistory(true);
     try { setHistory(await getShipments()); }
-    catch { /* ignore */ }
+    catch { setPipelineErr("connection_failed"); }
     finally { setLoadingHistory(false); }
   };
 
@@ -136,6 +136,16 @@ export default function Dashboard() {
   const mismatched  = rows.filter(r => r.status === "mismatch").length;
   const missing     = rows.filter(r => r.status === "missing").length;
   const decisionType = result?.decision?.decision; // "approved" | "amendment_required"
+
+  if (pipelineErr === "connection_failed" && !history.length) {
+    return (
+      <div className="page" style={{ alignItems: "center", justifyContent: "center", height: "80vh", textAlign: "center" }}>
+        <h2 style={{ color: "var(--bad)", marginBottom: 12 }}>Connection Error</h2>
+        <p style={{ color: "var(--ink-2)", maxWidth: 300 }}>Could not connect to the backend server. Please check your VITE_API_BASE_URL.</p>
+        <button className="btn btn-ghost" style={{ marginTop: 24 }} onClick={() => window.location.reload()}>Retry Connection</button>
+      </div>
+    );
+  }
 
   return (
     <div className="page">
