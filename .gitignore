@@ -1,0 +1,20 @@
+# Node
+frontend/node_modules/
+frontend/dist/
+
+# Python
+backend/.venv/
+**/__pycache__/
+*.pyc
+
+# Environment & Secrets
+.env
+backend/.env
+frontend/.env
+
+# Local Storage (uploaded files)
+backend/storage/
+
+# System
+.DS_Store
+submission/
