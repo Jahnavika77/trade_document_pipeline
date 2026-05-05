@@ -11,10 +11,16 @@
   </head>
   <body>
     <div id="root">
-      <div style="display:flex; align-items:center; justify-content:center; height:100vh; color:#4d5566; font-family:sans-serif;">
+      <div id="debug-msg" style="display:flex; align-items:center; justify-content:center; height:100vh; color:#4d5566; font-family:sans-serif; text-align:center; padding:20px;">
         Loading Console...
       </div>
     </div>
+    <script>
+      window.onerror = function(msg, url, line) {
+        document.getElementById('debug-msg').innerHTML = 
+          '<div style="color:#ef4444"><b>JS Error:</b> ' + msg + '<br><small>' + url + ':' + line + '</small></div>';
+      };
+    </script>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

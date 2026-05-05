@@ -1,6 +1,6 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
-import Dashboard from "./pages/Dashboard";
+import Dashboard from "./pages/Dashboard.jsx";
 import "./styles/global.css";
 
 createRoot(document.getElementById("root")).render(
