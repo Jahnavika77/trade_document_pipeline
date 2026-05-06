@@ -167,7 +167,12 @@ export default function Dashboard() {
     return (
       <div className="page" style={{ alignItems: "center", justifyContent: "center", height: "80vh", textAlign: "center" }}>
         <h2 style={{ color: "var(--bad)", marginBottom: 12 }}>Connection Error</h2>
-        <p style={{ color: "var(--ink-2)", maxWidth: 300 }}>Could not connect to the backend server. Please check your VITE_API_BASE_URL.</p>
+        <p style={{ color: "var(--ink-2)", maxWidth: 400 }}>
+          Could not connect to the backend at:<br/>
+          <code style={{ background: "#000", padding: "4px 8px", borderRadius: 4, display: "inline-block", marginTop: 8 }}>
+            {import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api"}
+          </code>
+        </p>
         <button className="btn btn-ghost" style={{ marginTop: 24 }} onClick={() => window.location.reload()}>Retry Connection</button>
       </div>
     );
