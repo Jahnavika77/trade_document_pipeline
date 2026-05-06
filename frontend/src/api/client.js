@@ -44,3 +44,11 @@ export async function runQuery(question) {
   });
   return res.json();
 }
+export async function sendEmail(id, subject, body) {
+  const res = await fetch(`${API_BASE}/shipments/${id}/send-email`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ subject, body }),
+  });
+  return res.json();
+}

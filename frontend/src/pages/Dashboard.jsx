@@ -39,6 +39,7 @@ export default function Dashboard() {
 
   // ── Result state ───────────────────────────
   const [result,      setResult]      = useState(null);     // shipment detail object
+  const [draftSubject,setDraftSubject]    = useState("");
   const [draftEmail,  setDraftEmail]  = useState("");
 
   // ── History ────────────────────────────────
@@ -50,6 +51,7 @@ export default function Dashboard() {
   const [queryResult, setQueryResult] = useState(null);
   const [queryErr,    setQueryErr]    = useState("");
   const [querying,    setQuerying]    = useState(false);
+  const [sending,     setSending]     = useState(false);
 
   // Load history on mount and after each pipeline run
   const loadHistory = async () => {
@@ -72,6 +74,7 @@ export default function Dashboard() {
     setStepMsgs({});
     setPipelineErr("");
     setResult(null);
+    setDraftSubject("");
     setDraftEmail("");
 
     try {
@@ -96,6 +99,7 @@ export default function Dashboard() {
       setActiveStep(4);
       const detail = await getShipmentDetails(shipmentId);
       setResult(detail);
+      setDraftSubject(detail?.decision?.email_subject || `Trade Document Verification - ${shipmentId}`);
       setDraftEmail(detail?.decision?.draft_email || "");
 
       setPhase("done");
@@ -110,6 +114,20 @@ export default function Dashboard() {
     const picked = Array.from(e.target.files || []);
     setFiles(picked);
     if (picked.length) setPhase("idle"); // reset if user picks new files
+  };
+
+  const handleSendEmail = async () => {
+    if (!result || !draftEmail) return;
+    setSending(true);
+    try {
+      const subject = draftSubject || result.subject;
+      await import("../api/client").then(m => m.sendEmail(result.shipment_id, subject, draftEmail));
+      alert("✅ Email sent successfully!");
+    } catch (e) {
+      alert("❌ Failed to send email: " + e.message);
+    } finally {
+      setSending(false);
+    }
   };
 
   // ── Query handler ──────────────────────────
@@ -337,6 +355,13 @@ export default function Dashboard() {
               {decisionType === "approved" ? "✅ Approved" : "✏️ Amendment Required"}
             </div>
           )}
+          <input
+            type="text"
+            value={draftSubject}
+            onChange={e => setDraftSubject(e.target.value)}
+            placeholder="Email Subject..."
+            style={{ marginBottom: 10, fontWeight: "600" }}
+          />
           <textarea
             value={draftEmail}
             onChange={e => setDraftEmail(e.target.value)}
@@ -350,9 +375,10 @@ export default function Dashboard() {
           <div style={{ display: "flex", gap: 10 }}>
             <button
               className="btn btn-green"
-              onClick={() => alert("✅ Simulated send — in production this opens your email client.")}
+              onClick={handleSendEmail}
+              disabled={sending || !draftEmail}
             >
-              ✉️ Send as CG
+              {sending ? "Sending..." : "📧 Send as CG"}
             </button>
             <button
               className="btn btn-ghost"
@@ -401,7 +427,7 @@ export default function Dashboard() {
       <div className="card">
         <div className="card-title">🔎 Database Query</div>
         <p className="muted-text" style={{ marginBottom: 12 }}>
-          Ask a question in plain English — e.g. "show all pending shipments for Max Enterprises"
+          Ask a question in plain English — e.g. "show all verified shipments for Max Enterprises"
         </p>
 
         <div className="query-row">

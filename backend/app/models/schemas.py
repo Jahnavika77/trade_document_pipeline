@@ -55,6 +55,7 @@ class RoutingOutcome(str, Enum):
 class RouterDecision(BaseModel):
     outcome: RoutingOutcome
     reasoning: str
+    email_subject: str
     draft_email: str
 
 class CrossDocumentIssue(BaseModel):

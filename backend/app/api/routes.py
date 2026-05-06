@@ -63,3 +63,17 @@ def query(payload: dict):
         return nlp_query(question)
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
+from app.services.email_service import send_trade_email
+
+@router.post("/shipments/{shipment_id}/send-email")
+def send_email(shipment_id: str, payload: dict):
+    subject = payload.get("subject", "Trade Document Verification")
+    body = payload.get("body", "")
+    if not body:
+        raise HTTPException(status_code=400, detail="Email body is required")
+    
+    try:
+        send_trade_email(subject, body)
+        return {"ok": True}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Email failed: {str(e)}")

@@ -104,6 +104,7 @@ EMAIL CONTENT RULES:
 - If drafting an amendment: Be polite but firm. List the specific fields that mismatch and from which documents.
 - If auto-approving: Confirm that all documents are verified and correct.
 - If flagging for review: State that some fields were hard to read and need manual verification.
+- Provide a professional email_subject (e.g., "Amendment Required for Shipment #...").
 - Always sign as "Nova Trade Support".
 
 Validation payload:
