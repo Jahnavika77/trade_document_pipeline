@@ -56,8 +56,16 @@ export default function Dashboard() {
   // Load history on mount and after each pipeline run
   const loadHistory = async () => {
     setLoadingHistory(true);
-    try { setHistory(await getShipments()); }
-    catch { setPipelineErr("connection_failed"); }
+    setPipelineErr("");
+    try { 
+      const data = await getShipments();
+      if (!Array.isArray(data)) throw new Error("Invalid history data received from server.");
+      setHistory(data); 
+    }
+    catch (e) { 
+      console.error("History Load Error:", e);
+      setPipelineErr("connection_failed"); 
+    }
     finally { setLoadingHistory(false); }
   };
 
