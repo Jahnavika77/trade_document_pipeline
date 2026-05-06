@@ -1,71 +1,87 @@
-# Nova Trade Documents - Part 2 (Backend + React Frontend)
+# 🚢 Nova Trade: AI Document Verification Pipeline
 
-This repo is now split for easy Render deployment:
-- `backend/` FastAPI + Neon PostgreSQL + background inbox trigger worker
-- `frontend/` React (Vite) CG verification console
+Nova is an intelligent, multi-agent trade document verification system. It automates the extraction, validation, and routing of international trade documents (Invoices, Packing Lists, etc.) while providing a real-time dashboard for shipment monitoring and historical analysis.
 
-## What Part 2 Implements
-- Simulated SU inbox trigger (`backend/inbox/<shipment_folder>/`)
-- Multi-attachment shipment handling
-- Per-document extraction + rule validation
-- Cross-document consistency checks
-- Router decision + editable draft reply
-- Verified outputs stored in Neon PostgreSQL
-- Queryable API endpoint for NL-style queries
+## 🚀 Live Demo
+- **Frontend**: `https://nova-trade-frontend.onrender.com`
+- **Backend API**: `https://trade-document-pipeline.onrender.com`
 
-## Backend Setup
-```bash
-cd backend
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-cp .env.example .env
+## ✨ Features
+
+- **Multi-Agent Orchestration**: 
+  - **Extractor Agent**: Uses GPT-4o Vision to perform high-accuracy OCR and field extraction from PDFs and Images.
+  - **Validator Agent**: Cross-checks extracted data against customer-specific business rules.
+  - **Router Agent**: Decides if a shipment should be approved, flagged for review, or if an amendment is required.
+- **Traceability & Logs**: Real-time terminal logs with step-by-step progress tracking for every agent action.
+- **Natural Language Search**: Query historical shipments using plain English (Text-to-SQL) powered by OpenAI.
+- **Email Automation**: Automatic drafting of professional amendment or approval emails, with a manual "Send as CG" trigger.
+- **Cloud Ready**: Fully deployed on Render with Neon PostgreSQL integration.
+
+## 🛠 Tech Stack
+
+- **Backend**: FastAPI, Pydantic, SQLAlchemy, OpenAI GPT-4o.
+- **Frontend**: React (Vite), Vanilla CSS (Custom Design System).
+- **Database**: PostgreSQL (Neon).
+- **Deployment**: Render.
+
+## 📦 Project Structure
+
+```text
+├── backend/
+│   ├── app/
+│   │   ├── services/       # AI Agent logic & Pipeline orchestration
+│   │   ├── api/            # FastAPI routes
+│   │   └── models/         # Database & Pydantic schemas
+│   ├── inbox/              # Local processing storage
+│   └── requirements.txt    # Python dependencies
+├── frontend/
+│   ├── src/
+│   │   ├── pages/          # Dashboard & Analytics
+│   │   └── api/            # Frontend API client
+│   └── package.json        # Node dependencies
+└── customer_rules.json     # Business logic configuration
 ```
 
-Set in `.env`:
-- `OPENAI_API_KEY`
-- `DATABASE_URL` (Neon connection string with `sslmode=require`)
+## 🛠 Installation & Local Setup
 
-Run:
+### 1. Prerequisites
+- Python 3.11+
+- Node.js 18+
+- OpenAI API Key
+
+### 2. Backend Setup
+```bash
+cd backend
+python -m venv .venv
+source .venv/bin/activate  # Mac/Linux
+pip install -r requirements.txt
+```
+Create a `.env` file in the `backend/` folder:
+```env
+OPENAI_API_KEY=your_key_here
+DATABASE_URL=your_postgres_url
+SMTP_USER=your_email
+SMTP_PASSWORD=your_app_password
+```
+Run the server:
 ```bash
 uvicorn app.main:app --reload --port 8000
 ```
 
-## Frontend Setup
+### 3. Frontend Setup
 ```bash
 cd frontend
 npm install
-cp .env.example .env
 npm run dev
 ```
 
-## Simulated Inbox Trigger Flow
-1. Create folder: `backend/inbox/<shipment_name>/`
-2. Add `metadata.json` with `customer_name` and `subject`
-3. Add attachments (`.pdf/.png/.jpg/.jpeg`)
-4. Backend worker auto-detects and processes folder
+## 🧪 Testing the Pipeline
+1. Open the dashboard.
+2. Upload a trade document (e.g., a Sales Tax Invoice).
+3. Watch the **Real-time Pipeline** track the agents through Extraction, Validation, and Routing.
+4. Review the **Validation Results** to see field-level matches and discrepancies.
+5. Edit and send the **Draft Reply Email** directly from the console.
+6. Use the **Database Query** at the bottom to find the shipment later!
 
-## Render Deployment
-
-### Backend (Web Service)
-- Root directory: `backend`
-- Build: `pip install -r requirements.txt`
-- Start: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
-- Env vars:
-  - `DATABASE_URL`
-  - `OPENAI_API_KEY`
-
-### Frontend (Static Site)
-- Root directory: `frontend`
-- Build: `npm install && npm run build`
-- Publish directory: `dist`
-- Env var:
-  - `VITE_API_BASE_URL=https://<your-backend>.onrender.com/api`
-
-## API Endpoints
-- `GET /api/health`
-- `POST /api/shipments/ingest`
-- `POST /api/shipments/{shipment_id}/process`
-- `GET /api/shipments`
-- `GET /api/shipments/{shipment_id}`
-- `POST /api/query`
+---
+Developed for the **GoComet Full-Stack AI Engineer Assignment**.
