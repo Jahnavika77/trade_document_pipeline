@@ -15,13 +15,15 @@ def send_trade_email(subject: str, body: str):
         return True
 
     try:
+        print(f"📡 [EMAIL] Attempting to connect to {settings.smtp_host}:{settings.smtp_port}...")
         msg = MIMEMultipart()
         msg['From'] = settings.smtp_user
         msg['To'] = settings.receiver_email
         msg['Subject'] = subject
         msg.attach(MIMEText(body, 'plain'))
 
-        server = smtplib.SMTP(settings.smtp_host, settings.smtp_port)
+        server = smtplib.SMTP(settings.smtp_host, settings.smtp_port, timeout=10)
+        server.set_debuglevel(1)  # This will print the full conversation with Gmail in your logs
         server.starttls()
         server.login(settings.smtp_user, settings.smtp_password)
         server.send_message(msg)
@@ -30,5 +32,5 @@ def send_trade_email(subject: str, body: str):
         print(f"✅ [EMAIL] Successfully sent to {settings.receiver_email}")
         return True
     except Exception as e:
-        print(f"❌ [EMAIL] Failed to send: {str(e)}")
+        print(f"❌ [EMAIL] SMTP Error: {str(e)}")
         raise e
